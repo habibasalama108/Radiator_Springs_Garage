@@ -4,7 +4,7 @@
 #include <fstream>
 
 using namespace std;
-
+//base class that contains the common information for all cars
 class Car {
 private:
     int carNumber;
@@ -16,7 +16,7 @@ private:
     double capacity;
 
 public:
-
+    //setters to update car information
     void setCarNumber(int num){ carNumber = num; }
     void setFullName(string name){ fullName = name; }
     void setAge(int a){ if(a > 0) age = a; }
@@ -24,7 +24,8 @@ public:
     void setRacingTeam(string team){ racingTeam = team; }
     void setSpeed(double s){ if(s > 0) speed = s; }
     void setCapacity(double c){ if(c > 0) capacity = c; }
-
+    
+    //getters to access private data
     int getCarNumber(){ return carNumber; }
     string getFullName(){ return fullName; }
     int getAge(){ return age; }
@@ -32,6 +33,8 @@ public:
     string getRacingTeam(){ return racingTeam; }
     double getSpeed(){ return speed; }
     double getCapacity(){ return capacity; }
+
+    //display the common information for any car
     void displayBasicInfo(){
         cout << "Car Number: " << getCarNumber() << endl;
         cout << "Full Name: " << getFullName() << endl;
@@ -41,7 +44,8 @@ public:
         cout << "Speed: " << getSpeed() << endl;
         cout << "Capacity: " << getCapacity() << endl;
     }
-
+    
+    //pure virtual functions that will be implemented in derived classes
     virtual double calculatePerformance() = 0;
     virtual void displayInfo() = 0;
     virtual void update() = 0;
@@ -49,6 +53,7 @@ public:
     virtual ~Car(){}
 };
 
+//Racer class inherits from car
 class Racer : public Car{
 
 private:
@@ -74,10 +79,12 @@ public:
         return lapsCompleted;
     }
 
+    //calculate racer performance score
     double calculatePerformance() override{
         return getSpeed()*10 + getCapacity();
     }
 
+    // Display racer information
     void displayInfo() override{
         displayBasicInfo();
         cout << "Races Completed: " << racesCompleted << endl;
@@ -85,6 +92,7 @@ public:
         cout << "Performance Score: " << calculatePerformance() << endl;
     }
 
+    //update racer information
     void update() override{
         int age;
         string team;
@@ -114,6 +122,7 @@ public:
         setLapsCompleted(laps);
     }
 
+    //save racer data to the file
     void saveToFile(ofstream &out) override{
         out<<"Racer"<<endl;
         out<<getCarNumber()<<endl;
@@ -127,6 +136,7 @@ public:
     }
 };
 
+// support vehicle class inherits from car
 class SupportVehicle : public Car{
 
 private:
@@ -152,10 +162,12 @@ public:
         return reliabilityRating;
     }
 
+    //calculate support vehicle performance score
     double calculatePerformance() override{
         return (getSpeed()*5) + (getCapacity()*5);
     }
 
+    //display support vehicle information
     void displayInfo() override{
         displayBasicInfo();
         cout << "Crew Size: " << crewSize << endl;
@@ -163,6 +175,7 @@ public:
         cout << "Performance Score: " << calculatePerformance() << endl;
     }
 
+    //update support vehicle information
     void update() override{
         int age;
         string team;
@@ -192,6 +205,7 @@ public:
         setReliabilityRating(rate);
     }
 
+    // save support vehicle data to the file
     void saveToFile(ofstream &out) override{
         out<<"SupportVehicle"<<endl;
         out<<getCarNumber()<<endl;
@@ -205,9 +219,13 @@ public:
     }
 }; 
 
+//store all cars inside the garage
 vector<Car*> garage;
+
+//function prototype for saving data
 void saveData();
 
+//add a new car to the garage 
 void checkIn(){
 
     int typeChoice;
@@ -232,6 +250,7 @@ void checkIn(){
         cout<<"Car Number: ";
         cin>>number;
 
+        // check if the car number aleardy exists
         bool exists = false;
 
         for(int i = 0; i < garage.size(); i++){
@@ -263,6 +282,7 @@ void checkIn(){
         cin>>races;
         cout<<"Laps Completed: ";
         cin>>laps;
+
         car->setCarNumber(number);
         car->setFullName(name);
         car->setAge(age);
@@ -272,6 +292,8 @@ void checkIn(){
         car->setCapacity(capacity);
         car->setRacesCompleted(races);
         car->setLapsCompleted(laps);
+
+        //add the new car to the garage
         garage.push_back(car);
         cout<<"\nCar Checked In Successfully!\n";
         saveData();
@@ -292,6 +314,8 @@ void checkIn(){
 
         cout<<"Car Number: ";
         cin>>number;
+
+        // check if the car number aleardy exists
         bool exists = false;
 
         for(int i = 0; i < garage.size(); i++){
@@ -323,6 +347,7 @@ void checkIn(){
         cin>>crew;
         cout<<"Reliability Rating: ";
         cin>>rate;
+
         car->setCarNumber(number);
         car->setFullName(name);
         car->setAge(age);
@@ -332,16 +357,20 @@ void checkIn(){
         car->setCapacity(capacity);
         car->setCrewSize(crew);
         car->setReliabilityRating(rate);
+
+        //add the new car to the garage
         garage.push_back(car);
         cout<<"\nCar Checked In Successfully!\n";
         saveData();
     }
 
+    // if the user enter invalid type (is not exsit)
     else{
         cout<<"Invalid Type"<<endl;
     }
 }
 
+//Display all cars stored in the garage
 void viewGarage(){
     if(garage.empty()){
         cout<<"\nGarage is Empty!\n";
@@ -356,6 +385,7 @@ void viewGarage(){
     }
 }
 
+// search for a car by number or name
 void findCar(){
     int choice;
     cout<<"\n1. Search by Car Number"<<endl;
@@ -396,6 +426,7 @@ void findCar(){
     }
 }
 
+//update the information of an existing car
 void updateCar(){
     int number;
     bool found = false;
@@ -417,6 +448,7 @@ void updateCar(){
     }
 }
 
+// remove a car from the garage 
 void retireCar(){
     int number;
     bool found = false;
@@ -430,6 +462,7 @@ void retireCar(){
             cin >> choice;
 
             if(choice == 'y' || choice == 'Y'){
+                // free the memory before removing the object 
                 delete garage[i];
                 garage.erase(garage.begin() + i);
                 cout << "Car Removed Successfully!" << endl;
@@ -445,6 +478,7 @@ void retireCar(){
     }
 }
 
+//Display simple statistics about the garage 
 void garageReport(){
     if(garage.empty()){
         cout<<"Garage is Empty!"<<endl;
@@ -472,7 +506,9 @@ void garageReport(){
     cout<<"Support Vehicles: "<<supportCount<<endl;
 }
 
+// save all garage data into a text file
 void saveData(){
+    // open the file for writing
     ofstream file("garage.txt");
     if(!file.is_open()){
         return;
@@ -484,7 +520,9 @@ void saveData(){
     file.close();
 }
 
+// load saved data from the text file 
 void loadData(){
+    //open the file for reading
     ifstream file("garage.txt");
 
     if(!file.is_open()){
@@ -561,11 +599,16 @@ void loadData(){
     }
     file.close();
 }
+
+// main function
 int main(){
 
+    //load previously saved cars
     loadData();
+
     int choice;
 
+    // Display the main menu until the user chooses Exit
     do{
 
         cout<<"\n========== Radiator Springs Garage ==========\n";
@@ -616,6 +659,7 @@ int main(){
         }
     }while(choice!=7);
 
+    //release allocated memory before exiting
     for(int i = 0; i < garage.size(); i++){
         delete garage[i];
     }
