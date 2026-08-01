@@ -1,0 +1,10 @@
+1
+Racer
+1
+Lightning McQueen
+5
+race
+200
+50
+345
+2000
